@@ -43,10 +43,19 @@ var lists = {
         options: [
           { label: "Published", value: "published" },
           { label: "Draft", value: "draft" }
-        ]
+        ],
+        defaultValue: "draft",
+        ui: { displayMode: "segmented-control" }
       }),
       author: (0, import_fields.relationship)({
-        ref: "User.posts"
+        ref: "User.posts",
+        ui: {
+          displayMode: "cards",
+          cardFields: ["name", "email"],
+          inlineEdit: { fields: ["name", "email"] },
+          linkToItem: true,
+          inlineCreate: { fields: ["name", "email"] }
+        }
       })
     }
   })
