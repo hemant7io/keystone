@@ -26,17 +26,28 @@ var import_core = require("@keystone-6/core");
 var import_access = require("@keystone-6/core/access");
 var import_fields = require("@keystone-6/core/fields");
 var lists = {
-  user: (0, import_core.list)({
+  User: (0, import_core.list)({
     access: import_access.allowAll,
     fields: {
       name: (0, import_fields.text)({ validation: { isRequired: true } }),
-      email: (0, import_fields.text)({ validation: { isRequired: true } })
+      email: (0, import_fields.text)({ validation: { isRequired: true } }),
+      posts: (0, import_fields.relationship)({ ref: "Post.author", many: true })
     }
   }),
   Post: (0, import_core.list)({
     access: import_access.allowAll,
     fields: {
-      title: (0, import_fields.text)()
+      title: (0, import_fields.text)(),
+      publishedAt: (0, import_fields.timestamp)(),
+      status: (0, import_fields.select)({
+        options: [
+          { label: "Published", value: "published" },
+          { label: "Draft", value: "draft" }
+        ]
+      }),
+      author: (0, import_fields.relationship)({
+        ref: "User.posts"
+      })
     }
   })
 };
