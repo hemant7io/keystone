@@ -4,7 +4,10 @@
   "description": "basic learning ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "keystone dev",
+    "start": "keystone start",
+    "build": "keystone build",
+    "postinstall": "keystone build --no-ui --frozen"
   },
   "author": "",
   "license": "ISC",
