@@ -25,18 +25,25 @@ module.exports = __toCommonJS(keystone_exports);
 var import_core = require("@keystone-6/core");
 var import_access = require("@keystone-6/core/access");
 var import_fields = require("@keystone-6/core/fields");
+var lists = {
+  user: (0, import_core.list)({
+    access: import_access.allowAll,
+    fields: {
+      name: (0, import_fields.text)({ validation: { isRequired: true } }),
+      email: (0, import_fields.text)({ validation: { isRequired: true } })
+    }
+  }),
+  Post: (0, import_core.list)({
+    access: import_access.allowAll,
+    fields: {
+      title: (0, import_fields.text)()
+    }
+  })
+};
 var keystone_default = (0, import_core.config)({
   db: {
     provider: "sqlite",
     url: "file:./keystone.db"
   },
-  lists: {
-    user: (0, import_core.list)({
-      access: import_access.allowAll,
-      fields: {
-        name: (0, import_fields.text)({ validation: { isRequired: true } }),
-        email: (0, import_fields.text)({ validation: { isRequired: true } })
-      }
-    })
-  }
+  lists
 });

@@ -16,3 +16,8 @@ model user {
   name  String @default("")
   email String @default("")
 }
+
+model Post {
+  id    String @id @default(cuid())
+  title String @default("")
+}
