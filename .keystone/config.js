@@ -24,14 +24,37 @@ __export(keystone_exports, {
 module.exports = __toCommonJS(keystone_exports);
 var import_core = require("@keystone-6/core");
 var import_access = require("@keystone-6/core/access");
+
+// auth.ts
+var import_auth = require("@keystone-6/auth");
+var import_session = require("@keystone-6/core/session");
+var sessionSecret = "asdfdsf98495465123adfjbljkdabfl785184j!@#$%^&*()@345%^&*#";
+var sessionMaxAge = 60 * 60 * 24 * 30;
+var session = (0, import_session.statelessSessions)({
+  maxAge: sessionMaxAge,
+  secret: sessionSecret
+});
+var { withAuth } = (0, import_auth.createAuth)({
+  listKey: "User",
+  identityField: "email",
+  sessionData: "name",
+  secretField: "password",
+  //Keystone has a feature so that if there are no existing users, you can create one when you first launch Admin UI. This is the initFirstItem
+  initFirstItem: {
+    fields: ["name", "email", "password"]
+  }
+});
+
+// keystone.ts
 var import_fields = require("@keystone-6/core/fields");
 var lists = {
   User: (0, import_core.list)({
     access: import_access.allowAll,
     fields: {
       name: (0, import_fields.text)({ validation: { isRequired: true } }),
-      email: (0, import_fields.text)({ validation: { isRequired: true } }),
-      posts: (0, import_fields.relationship)({ ref: "Post.author", many: true })
+      email: (0, import_fields.text)({ validation: { isRequired: true }, isIndexed: "unique" }),
+      posts: (0, import_fields.relationship)({ ref: "Post.author", many: true }),
+      password: (0, import_fields.password)({ validation: { isRequired: true } })
     }
   }),
   Post: (0, import_core.list)({
@@ -54,16 +77,22 @@ var lists = {
           cardFields: ["name", "email"],
           inlineEdit: { fields: ["name", "email"] },
           linkToItem: true,
-          inlineCreate: { fields: ["name", "email"] }
+          inlineCreate: { fields: ["name", "email", "password"] }
         }
       })
     }
   })
 };
-var keystone_default = (0, import_core.config)({
-  db: {
-    provider: "sqlite",
-    url: "file:./keystone.db"
-  },
-  lists
-});
+var keystone_default = (0, import_core.config)(
+  withAuth({
+    db: {
+      provider: "sqlite",
+      url: "file:./keystone.db"
+    },
+    lists,
+    session,
+    ui: {
+      isAccessAllowed: (context) => !!context.session?.data
+    }
+  })
+);

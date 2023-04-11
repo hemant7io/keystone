@@ -1,5 +1,7 @@
 import { config, list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
+import { withAuth, session } from "./auth";
+
 import {
   text,
   timestamp,
@@ -12,7 +14,7 @@ const lists = {
     access: allowAll,
     fields: {
       name: text({ validation: { isRequired: true } }),
-      email: text({ validation: { isRequired: true } }),
+      email: text({ validation: { isRequired: true }, isIndexed: "unique" }),
       posts: relationship({ ref: "Post.author", many: true }),
       password: password({ validation: { isRequired: true } }),
     },
@@ -37,17 +39,23 @@ const lists = {
           cardFields: ["name", "email"],
           inlineEdit: { fields: ["name", "email"] },
           linkToItem: true,
-          inlineCreate: { fields: ["name", "email"] },
+          inlineCreate: { fields: ["name", "email", "password"] },
         },
       }),
     },
   }),
 };
 
-export default config({
-  db: {
-    provider: "sqlite",
-    url: "file:./keystone.db",
-  },
-  lists,
-});
+export default config(
+  withAuth({
+    db: {
+      provider: "sqlite",
+      url: "file:./keystone.db",
+    },
+    lists,
+    session,
+    ui: {
+      isAccessAllowed: (context) => !!context.session?.data,
+    },
+  })
+);
