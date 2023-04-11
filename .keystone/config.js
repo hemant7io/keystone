@@ -48,21 +48,23 @@ var { withAuth } = (0, import_auth.createAuth)({
 
 // keystone.ts
 var import_fields = require("@keystone-6/core/fields");
+var import_fields2 = require("@keystone-6/core/fields");
 var lists = {
   User: (0, import_core.list)({
     access: import_access.allowAll,
     fields: {
-      name: (0, import_fields.text)({ validation: { isRequired: true } }),
-      email: (0, import_fields.text)({ validation: { isRequired: true }, isIndexed: "unique" }),
-      posts: (0, import_fields.relationship)({ ref: "Post.author", many: true }),
-      password: (0, import_fields.password)({ validation: { isRequired: true } })
+      name: (0, import_fields2.text)({ validation: { isRequired: true } }),
+      email: (0, import_fields2.text)({ validation: { isRequired: true }, isIndexed: "unique" }),
+      posts: (0, import_fields2.relationship)({ ref: "Post.author", many: true }),
+      password: (0, import_fields2.password)({ validation: { isRequired: true } })
     }
   }),
   Post: (0, import_core.list)({
     access: import_access.allowAll,
     fields: {
-      title: (0, import_fields.text)(),
+      title: (0, import_fields2.text)(),
       //Customise the Document field
+      avatar: (0, import_fields.image)({ storage: "my_local_images" }),
       content: (0, import_fields_document.document)({
         /* */
         formatting: true,
@@ -77,8 +79,8 @@ var lists = {
         ]
         /* */
       }),
-      publishedAt: (0, import_fields.timestamp)(),
-      status: (0, import_fields.select)({
+      publishedAt: (0, import_fields2.timestamp)(),
+      status: (0, import_fields2.select)({
         options: [
           { label: "Published", value: "published" },
           { label: "Draft", value: "draft" }
@@ -86,7 +88,7 @@ var lists = {
         defaultValue: "draft",
         ui: { displayMode: "segmented-control" }
       }),
-      author: (0, import_fields.relationship)({
+      author: (0, import_fields2.relationship)({
         ref: "User.posts",
         ui: {
           displayMode: "cards",
@@ -106,6 +108,18 @@ var keystone_default = (0, import_core.config)(
       url: "postgres://postgres:password@localhost:5432/postgres"
     },
     lists,
+    /* storing image locally */
+    storage: {
+      my_local_images: {
+        kind: "local",
+        type: "image",
+        generateUrl: (path) => `http://localhost:3000/images${path}`,
+        serverRoute: {
+          path: "/images"
+        },
+        storagePath: "public/images"
+      }
+    },
     session,
     ui: {
       isAccessAllowed: (context) => !!context.session?.data

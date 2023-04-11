@@ -20,13 +20,18 @@ model User {
 }
 
 model Post {
-  id          String    @id @default(cuid())
-  title       String    @default("")
-  content     Json      @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
-  publishedAt DateTime?
-  status      String?   @default("draft")
-  author      User?     @relation("Post_author", fields: [authorId], references: [id])
-  authorId    String?   @map("author")
+  id               String    @id @default(cuid())
+  title            String    @default("")
+  avatar_filesize  Int?
+  avatar_extension String?
+  avatar_width     Int?
+  avatar_height    Int?
+  avatar_id        String?
+  content          Json      @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  publishedAt      DateTime?
+  status           String?   @default("draft")
+  author           User?     @relation("Post_author", fields: [authorId], references: [id])
+  authorId         String?   @map("author")
 
   @@index([authorId])
 }

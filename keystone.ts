@@ -2,6 +2,8 @@ import { config, list } from "@keystone-6/core";
 import { document } from "@keystone-6/fields-document";
 import { allowAll } from "@keystone-6/core/access";
 import { withAuth, session } from "./auth";
+//adding image
+import { image } from "@keystone-6/core/fields";
 
 import {
   text,
@@ -10,6 +12,7 @@ import {
   select,
   password,
 } from "@keystone-6/core/fields";
+
 const lists = {
   User: list({
     access: allowAll,
@@ -25,6 +28,8 @@ const lists = {
     fields: {
       title: text(),
       //Customise the Document field
+      avatar: image({ storage: "my_local_images" }),
+
       content: document({
         /* */
         formatting: true,
@@ -69,6 +74,19 @@ export default config(
       url: "postgres://postgres:password@localhost:5432/postgres",
     },
     lists,
+    /* storing image locally */
+    storage: {
+      my_local_images: {
+        kind: "local",
+        type: "image",
+        generateUrl: (path) => `http://localhost:3000/images${path}`,
+        serverRoute: {
+          path: "/images",
+        },
+
+        storagePath: "public/images",
+      },
+    },
     session,
     ui: {
       isAccessAllowed: (context) => !!context.session?.data,
