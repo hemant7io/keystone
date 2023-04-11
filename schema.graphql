@@ -51,7 +51,13 @@ input StringFilter {
   contains: String
   startsWith: String
   endsWith: String
+  mode: QueryMode
   not: NestedStringFilter
+}
+
+enum QueryMode {
+  default
+  insensitive
 }
 
 input NestedStringFilter {
@@ -119,9 +125,14 @@ input PostRelateToManyForCreateInput {
 type Post {
   id: ID!
   title: String
+  content: Post_content_Document
   publishedAt: DateTime
   status: String
   author: User
+}
+
+type Post_content_Document {
+  document(hydrateRelationships: Boolean! = false): JSON!
 }
 
 scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
@@ -163,6 +174,7 @@ input StringNullableFilter {
   contains: String
   startsWith: String
   endsWith: String
+  mode: QueryMode
   not: NestedStringNullableFilter
 }
 
@@ -189,6 +201,7 @@ input PostOrderByInput {
 
 input PostUpdateInput {
   title: String
+  content: JSON
   publishedAt: DateTime
   status: String
   author: UserRelateToOneForUpdateInput
@@ -207,6 +220,7 @@ input PostUpdateArgs {
 
 input PostCreateInput {
   title: String
+  content: JSON
   publishedAt: DateTime
   status: String
   author: UserRelateToOneForCreateInput
@@ -354,11 +368,6 @@ enum KeystoneAdminUIFieldMetaItemViewFieldMode {
 enum KeystoneAdminUIFieldMetaItemViewFieldPosition {
   form
   sidebar
-}
-
-enum QueryMode {
-  default
-  insensitive
 }
 
 type KeystoneAdminUIFieldGroupMeta {

@@ -1,4 +1,5 @@
 import { config, list } from "@keystone-6/core";
+import { document } from "@keystone-6/fields-document";
 import { allowAll } from "@keystone-6/core/access";
 import { withAuth, session } from "./auth";
 
@@ -23,6 +24,21 @@ const lists = {
     access: allowAll,
     fields: {
       title: text(),
+      //Customise the Document field
+      content: document({
+        /* */
+        formatting: true,
+        links: true,
+        dividers: true,
+        layouts: [
+          [1, 1],
+          [1, 1, 1],
+          [2, 1],
+          [1, 2],
+          [1, 2, 1],
+        ],
+        /* */
+      }),
       publishedAt: timestamp(),
       status: select({
         options: [
@@ -49,8 +65,8 @@ const lists = {
 export default config(
   withAuth({
     db: {
-      provider: "sqlite",
-      url: "file:./keystone.db",
+      provider: "postgresql",
+      url: "postgres://postgres:password@localhost:5432/postgres",
     },
     lists,
     session,

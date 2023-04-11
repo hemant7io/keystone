@@ -23,6 +23,7 @@ __export(keystone_exports, {
 });
 module.exports = __toCommonJS(keystone_exports);
 var import_core = require("@keystone-6/core");
+var import_fields_document = require("@keystone-6/fields-document");
 var import_access = require("@keystone-6/core/access");
 
 // auth.ts
@@ -61,6 +62,21 @@ var lists = {
     access: import_access.allowAll,
     fields: {
       title: (0, import_fields.text)(),
+      //Customise the Document field
+      content: (0, import_fields_document.document)({
+        /* */
+        formatting: true,
+        links: true,
+        dividers: true,
+        layouts: [
+          [1, 1],
+          [1, 1, 1],
+          [2, 1],
+          [1, 2],
+          [1, 2, 1]
+        ]
+        /* */
+      }),
       publishedAt: (0, import_fields.timestamp)(),
       status: (0, import_fields.select)({
         options: [
@@ -86,8 +102,8 @@ var lists = {
 var keystone_default = (0, import_core.config)(
   withAuth({
     db: {
-      provider: "sqlite",
-      url: "file:./keystone.db"
+      provider: "postgresql",
+      url: "postgres://postgres:password@localhost:5432/postgres"
     },
     lists,
     session,
