@@ -12,7 +12,7 @@ import {
   select,
   password,
 } from "@keystone-6/core/fields";
-
+import sharp from "sharp";
 const lists = {
   User: list({
     access: allowAll,
@@ -22,14 +22,57 @@ const lists = {
       posts: relationship({ ref: "Post.author", many: true }),
       password: password({ validation: { isRequired: true } }),
     },
+    hooks: {
+      afterOperation: ({ operation, item }) => {
+        if (operation === "create") {
+          console.log(
+            `New user created. Name: ${item.name}, Email: ${item.email}`
+          );
+        }
+      },
+    },
   }),
   Post: list({
     access: allowAll,
     fields: {
-      title: text(),
+      title: text({
+        hooks: {
+          afterOperation: ({ operation, item }) => {
+            if (operation === "create") {
+              console.log(`title: ${item.title}`);
+            }
+          },
+        },
+      }),
       //Customise the Document field
-      avatar: image({ storage: "my_local_images" }),
-
+      avatar: image({
+        storage: "my_local_images",
+        hooks: {
+          beforeOperation: async ({ item, inputData, resolvedData }) => {
+            // const resizeImage = await sharp(inputData).resize(150);
+            // console.log("item", item, inputData, resolvedData);
+            // inputData?.avatar?.upload
+            // await sharp(
+            //   "http://localhost:3000/images/" +
+            //     resolvedData?.avatar?.id +
+            //     "." +
+            //     resolvedData?.avatar?.extension
+            // )
+            //   .resize({ width: 100 })
+            //   .toBuffer()
+            //   .then((data) => data);
+            // return resizeImage;
+            // if (resolvedData?.avatar) {
+            //   const input = `http://localhost:3000/images/${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`;
+            //   // console.log(image);
+            //   await sharp(input)
+            //     .resize({ width: 100 })
+            //     .toBuffer()
+            //     .then((data) => data);
+            // }
+          },
+        },
+      }),
       content: document({
         /* */
         formatting: true,
@@ -63,6 +106,15 @@ const lists = {
           inlineCreate: { fields: ["name", "email", "password"] },
         },
       }),
+    },
+    hooks: {
+      afterOperation: ({ operation, item }) => {
+        if (operation === "create") {
+          console.log(
+            `New user created. Name: ${item.name}, Email: ${item.email}`
+          );
+        }
+      },
     },
   }),
 };

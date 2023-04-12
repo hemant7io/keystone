@@ -57,14 +57,37 @@ var lists = {
       email: (0, import_fields2.text)({ validation: { isRequired: true }, isIndexed: "unique" }),
       posts: (0, import_fields2.relationship)({ ref: "Post.author", many: true }),
       password: (0, import_fields2.password)({ validation: { isRequired: true } })
+    },
+    hooks: {
+      afterOperation: ({ operation, item }) => {
+        if (operation === "create") {
+          console.log(
+            `New user created. Name: ${item.name}, Email: ${item.email}`
+          );
+        }
+      }
     }
   }),
   Post: (0, import_core.list)({
     access: import_access.allowAll,
     fields: {
-      title: (0, import_fields2.text)(),
+      title: (0, import_fields2.text)({
+        hooks: {
+          afterOperation: ({ operation, item }) => {
+            if (operation === "create") {
+              console.log(`title: ${item.title}`);
+            }
+          }
+        }
+      }),
       //Customise the Document field
-      avatar: (0, import_fields.image)({ storage: "my_local_images" }),
+      avatar: (0, import_fields.image)({
+        storage: "my_local_images",
+        hooks: {
+          beforeOperation: async ({ item, inputData, resolvedData }) => {
+          }
+        }
+      }),
       content: (0, import_fields_document.document)({
         /* */
         formatting: true,
@@ -98,6 +121,15 @@ var lists = {
           inlineCreate: { fields: ["name", "email", "password"] }
         }
       })
+    },
+    hooks: {
+      afterOperation: ({ operation, item }) => {
+        if (operation === "create") {
+          console.log(
+            `New user created. Name: ${item.name}, Email: ${item.email}`
+          );
+        }
+      }
     }
   })
 };
