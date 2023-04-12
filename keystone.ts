@@ -51,74 +51,24 @@ const lists = {
         storage: "my_local_images",
         hooks: {
           beforeOperation: async ({ item, inputData, resolvedData }) => {
-            console.log("1", inputData);
-            console.log(
-              resolvedData?.avatar?.id + resolvedData?.avatar?.extension
-            );
-            await sharp(
-              "public/images/" +
-                resolvedData?.avatar?.id +
-                "." +
-                resolvedData?.avatar?.extension
-            )
-              .resize(200, 200)
-              .toFile("output.png")
+            const sizes = [200, 400, 600];
+
+            sizes.map(async (size) => {
+              await sharp(
+                "public/images/" +
+                  resolvedData?.avatar?.id +
+                  "." +
+                  resolvedData?.avatar?.extension
+              )
+                .resize(size)
+                .toFile(
+                  `public/images/${size}-${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
+                );
               // .toBuffer()
-              .then((data) => {
-                console.log("data", data);
-                return data;
-              });
-            // .toFile("/dasd", (err, info) => {
-            //   if (err) {
-            //     console.error("err", err);
-            //   } else {
-            //     console.log("info", info);
-            //   }
-            // });
-            // console.log("item", item, inputData, resolvedData);
-            // inputData?.avatar?.upload
-            // await sharp(
-            //   "http://localhost:3000/images/" +
-            //     resolvedData?.avatar?.id +
-            //     "." +
-            //     resolvedData?.avatar?.extension
-            // )
-            //   .resize({ width: 100 })
-            //   .toBuffer()
-            //   .then((data) => data);
-            /** */
-            // const filepath = path.join(
-            //   process.cwd(),
-            //   "public",
-            //   "images",
-            //   `${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
-            // );
-            // const image = await fs.readFile(filepath);
-            // // return resizeImage;
-            // if (resolvedData?.avatar) {
-            //   const input = `./public/images/${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`;
-            //   // console.log(image);
-            //   await sharp(image).resize(200, 200).toFile(`output/image`);
-            // }
-            // const filepath = path.join(
-            //   process.cwd(),
-            //   "public",
-            //   "images",
-            //   `${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
-            // );
-            // await sharp(
-            //   // `http://localhost:3000/images/${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
-            //   // `./public/images/${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
-            //   filepath
-            // )
-            //   .resize(200, 200)
-            //   .toFile("/dasd", (err, info) => {
-            //     if (err) {
-            //       console.error("err", err);
-            //     } else {
-            //       console.log("info", info);
-            //     }
-            //   });
+              // .then((data) => {
+              //   return data;
+              // });
+            });
           },
         },
       }),

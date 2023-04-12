@@ -96,15 +96,13 @@ var lists = {
         storage: "my_local_images",
         hooks: {
           beforeOperation: async ({ item, inputData, resolvedData }) => {
-            console.log("1", inputData);
-            console.log(
-              resolvedData?.avatar?.id + resolvedData?.avatar?.extension
-            );
-            await (0, import_sharp.default)(
-              "public/images/" + resolvedData?.avatar?.id + "." + resolvedData?.avatar?.extension
-            ).resize(200, 200).toFile("output.png").then((data) => {
-              console.log("data", data);
-              return data;
+            const sizes = [200, 400, 600];
+            sizes.map(async (size) => {
+              await (0, import_sharp.default)(
+                "public/images/" + resolvedData?.avatar?.id + "." + resolvedData?.avatar?.extension
+              ).resize(size).toFile(
+                `public/images/${size}-${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
+              );
             });
           }
         }
