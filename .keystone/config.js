@@ -1,6 +1,8 @@
+var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __export = (target, all) => {
   for (var name in all)
@@ -14,6 +16,14 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // keystone.ts
@@ -49,6 +59,7 @@ var { withAuth } = (0, import_auth.createAuth)({
 // keystone.ts
 var import_fields = require("@keystone-6/core/fields");
 var import_fields2 = require("@keystone-6/core/fields");
+var import_sharp = __toESM(require("sharp"));
 var lists = {
   User: (0, import_core.list)({
     access: import_access.allowAll,
@@ -85,6 +96,16 @@ var lists = {
         storage: "my_local_images",
         hooks: {
           beforeOperation: async ({ item, inputData, resolvedData }) => {
+            console.log("1", inputData);
+            console.log(
+              resolvedData?.avatar?.id + resolvedData?.avatar?.extension
+            );
+            await (0, import_sharp.default)(
+              "public/images/" + resolvedData?.avatar?.id + "." + resolvedData?.avatar?.extension
+            ).resize(200, 200).toFile("output.png").then((data) => {
+              console.log("data", data);
+              return data;
+            });
           }
         }
       }),
@@ -121,16 +142,16 @@ var lists = {
           inlineCreate: { fields: ["name", "email", "password"] }
         }
       })
-    },
-    hooks: {
-      afterOperation: ({ operation, item }) => {
-        if (operation === "create") {
-          console.log(
-            `New user created. Name: ${item.name}, Email: ${item.email}`
-          );
-        }
-      }
     }
+    // hooks: {
+    //   afterOperation: ({ operation, item }) => {
+    //     if (operation === "create") {
+    //       console.log(
+    //         `New user created. Name: ${item.name}, Email: ${item.email}`
+    //       );
+    //     }
+    //   },
+    // },
   })
 };
 var keystone_default = (0, import_core.config)(

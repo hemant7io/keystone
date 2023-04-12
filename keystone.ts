@@ -3,7 +3,9 @@ import { document } from "@keystone-6/fields-document";
 import { allowAll } from "@keystone-6/core/access";
 import { withAuth, session } from "./auth";
 //adding image
-import { image } from "@keystone-6/core/fields";
+import { file, image } from "@keystone-6/core/fields";
+import fs from "fs/promises";
+import path from "path";
 
 import {
   text,
@@ -49,7 +51,30 @@ const lists = {
         storage: "my_local_images",
         hooks: {
           beforeOperation: async ({ item, inputData, resolvedData }) => {
-            // const resizeImage = await sharp(inputData).resize(150);
+            console.log("1", inputData);
+            console.log(
+              resolvedData?.avatar?.id + resolvedData?.avatar?.extension
+            );
+            await sharp(
+              "public/images/" +
+                resolvedData?.avatar?.id +
+                "." +
+                resolvedData?.avatar?.extension
+            )
+              .resize(200, 200)
+              .toFile("output.png")
+              // .toBuffer()
+              .then((data) => {
+                console.log("data", data);
+                return data;
+              });
+            // .toFile("/dasd", (err, info) => {
+            //   if (err) {
+            //     console.error("err", err);
+            //   } else {
+            //     console.log("info", info);
+            //   }
+            // });
             // console.log("item", item, inputData, resolvedData);
             // inputData?.avatar?.upload
             // await sharp(
@@ -61,15 +86,39 @@ const lists = {
             //   .resize({ width: 100 })
             //   .toBuffer()
             //   .then((data) => data);
-            // return resizeImage;
+            /** */
+            // const filepath = path.join(
+            //   process.cwd(),
+            //   "public",
+            //   "images",
+            //   `${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
+            // );
+            // const image = await fs.readFile(filepath);
+            // // return resizeImage;
             // if (resolvedData?.avatar) {
-            //   const input = `http://localhost:3000/images/${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`;
+            //   const input = `./public/images/${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`;
             //   // console.log(image);
-            //   await sharp(input)
-            //     .resize({ width: 100 })
-            //     .toBuffer()
-            //     .then((data) => data);
+            //   await sharp(image).resize(200, 200).toFile(`output/image`);
             // }
+            // const filepath = path.join(
+            //   process.cwd(),
+            //   "public",
+            //   "images",
+            //   `${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
+            // );
+            // await sharp(
+            //   // `http://localhost:3000/images/${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
+            //   // `./public/images/${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
+            //   filepath
+            // )
+            //   .resize(200, 200)
+            //   .toFile("/dasd", (err, info) => {
+            //     if (err) {
+            //       console.error("err", err);
+            //     } else {
+            //       console.log("info", info);
+            //     }
+            //   });
           },
         },
       }),
@@ -107,15 +156,15 @@ const lists = {
         },
       }),
     },
-    hooks: {
-      afterOperation: ({ operation, item }) => {
-        if (operation === "create") {
-          console.log(
-            `New user created. Name: ${item.name}, Email: ${item.email}`
-          );
-        }
-      },
-    },
+    // hooks: {
+    //   afterOperation: ({ operation, item }) => {
+    //     if (operation === "create") {
+    //       console.log(
+    //         `New user created. Name: ${item.name}, Email: ${item.email}`
+    //       );
+    //     }
+    //   },
+    // },
   }),
 };
 
