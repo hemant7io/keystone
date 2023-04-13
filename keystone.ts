@@ -22,7 +22,7 @@ const lists = {
       name: text(),
       email: text({ validation: { isRequired: true }, isIndexed: "unique" }),
       password: password({ validation: { isRequired: true } }),
-      // posts: relationship({ ref: "Post.author", many: true }),
+      posts: relationship({ ref: "Post.author", many: true }),
     },
   }),
   Post: list({
@@ -31,8 +31,8 @@ const lists = {
       title: text(),
       content: text(),
       author: relationship({
-        ref: "User",
-        // many: false,
+        ref: "User.posts",
+        many: false,
       }),
     },
   }),

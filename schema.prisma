@@ -12,11 +12,11 @@ generator client {
 }
 
 model User {
-  id               String @id @default(cuid())
-  name             String @default("")
-  email            String @unique @default("")
-  password         String
-  from_Post_author Post[] @relation("Post_author")
+  id       String @id @default(cuid())
+  name     String @default("")
+  email    String @unique @default("")
+  password String
+  posts    Post[] @relation("Post_author")
 }
 
 model Post {

@@ -53,8 +53,8 @@ var lists = {
     fields: {
       name: (0, import_fields.text)(),
       email: (0, import_fields.text)({ validation: { isRequired: true }, isIndexed: "unique" }),
-      password: (0, import_fields.password)({ validation: { isRequired: true } })
-      // posts: relationship({ ref: "Post.author", many: true }),
+      password: (0, import_fields.password)({ validation: { isRequired: true } }),
+      posts: (0, import_fields.relationship)({ ref: "Post.author", many: true })
     }
   }),
   Post: (0, import_core.list)({
@@ -63,8 +63,8 @@ var lists = {
       title: (0, import_fields.text)(),
       content: (0, import_fields.text)(),
       author: (0, import_fields.relationship)({
-        ref: "User"
-        // many: false,
+        ref: "User.posts",
+        many: false
       })
     }
   })
