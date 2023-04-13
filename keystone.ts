@@ -34,6 +34,7 @@ const lists = {
       },
     },
   }),
+
   Post: list({
     access: allowAll,
     fields: {
@@ -50,7 +51,7 @@ const lists = {
       avatar: image({
         storage: "my_local_images",
         hooks: {
-          beforeOperation: async ({ item, inputData, resolvedData }) => {
+          beforeOperation: async ({ resolvedData }) => {
             const sizes = [200, 400, 600];
 
             sizes.map(async (size) => {
@@ -64,10 +65,6 @@ const lists = {
                 .toFile(
                   `public/images/${size}-${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
                 );
-              // .toBuffer()
-              // .then((data) => {
-              //   return data;
-              // });
             });
           },
         },
@@ -97,24 +94,9 @@ const lists = {
       }),
       author: relationship({
         ref: "User.posts",
-        ui: {
-          displayMode: "cards",
-          cardFields: ["name", "email"],
-          inlineEdit: { fields: ["name", "email"] },
-          linkToItem: true,
-          inlineCreate: { fields: ["name", "email", "password"] },
-        },
+        // many: false,
       }),
     },
-    // hooks: {
-    //   afterOperation: ({ operation, item }) => {
-    //     if (operation === "create") {
-    //       console.log(
-    //         `New user created. Name: ${item.name}, Email: ${item.email}`
-    //       );
-    //     }
-    //   },
-    // },
   }),
 };
 

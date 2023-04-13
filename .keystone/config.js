@@ -95,7 +95,7 @@ var lists = {
       avatar: (0, import_fields.image)({
         storage: "my_local_images",
         hooks: {
-          beforeOperation: async ({ item, inputData, resolvedData }) => {
+          beforeOperation: async ({ resolvedData }) => {
             const sizes = [200, 400, 600];
             sizes.map(async (size) => {
               await (0, import_sharp.default)(
@@ -131,25 +131,10 @@ var lists = {
         ui: { displayMode: "segmented-control" }
       }),
       author: (0, import_fields2.relationship)({
-        ref: "User.posts",
-        ui: {
-          displayMode: "cards",
-          cardFields: ["name", "email"],
-          inlineEdit: { fields: ["name", "email"] },
-          linkToItem: true,
-          inlineCreate: { fields: ["name", "email", "password"] }
-        }
+        ref: "User.posts"
+        // many: false,
       })
     }
-    // hooks: {
-    //   afterOperation: ({ operation, item }) => {
-    //     if (operation === "create") {
-    //       console.log(
-    //         `New user created. Name: ${item.name}, Email: ${item.email}`
-    //       );
-    //     }
-    //   },
-    // },
   })
 };
 var keystone_default = (0, import_core.config)(
