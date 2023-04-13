@@ -12,26 +12,19 @@ generator client {
 }
 
 model User {
-  id       String @id @default(cuid())
-  name     String @default("")
-  email    String @unique @default("")
-  posts    Post[] @relation("Post_author")
-  password String
+  id               String @id @default(cuid())
+  name             String @default("")
+  email            String @unique @default("")
+  password         String
+  from_Post_author Post[] @relation("Post_author")
 }
 
 model Post {
-  id               String    @id @default(cuid())
-  title            String    @default("")
-  avatar_filesize  Int?
-  avatar_extension String?
-  avatar_width     Int?
-  avatar_height    Int?
-  avatar_id        String?
-  content          Json      @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
-  publishedAt      DateTime?
-  status           String?   @default("draft")
-  author           User?     @relation("Post_author", fields: [authorId], references: [id])
-  authorId         String?   @map("author")
+  id       String  @id @default(cuid())
+  title    String  @default("")
+  content  String  @default("")
+  author   User?   @relation("Post_author", fields: [authorId], references: [id])
+  authorId String? @map("author")
 
   @@index([authorId])
 }

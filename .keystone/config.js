@@ -1,8 +1,6 @@
-var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __export = (target, all) => {
   for (var name in all)
@@ -16,14 +14,6 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // keystone.ts
@@ -33,7 +23,6 @@ __export(keystone_exports, {
 });
 module.exports = __toCommonJS(keystone_exports);
 var import_core = require("@keystone-6/core");
-var import_fields_document = require("@keystone-6/fields-document");
 var import_access = require("@keystone-6/core/access");
 
 // auth.ts
@@ -58,98 +47,26 @@ var { withAuth } = (0, import_auth.createAuth)({
 
 // keystone.ts
 var import_fields = require("@keystone-6/core/fields");
-var import_fields2 = require("@keystone-6/core/fields");
-var import_sharp = __toESM(require("sharp"));
 var lists = {
   User: (0, import_core.list)({
     access: import_access.allowAll,
     fields: {
-      name: (0, import_fields2.text)({ validation: { isRequired: true } }),
-      email: (0, import_fields2.text)({ validation: { isRequired: true }, isIndexed: "unique" }),
-      posts: (0, import_fields2.relationship)({ ref: "Post.author", many: true }),
-      password: (0, import_fields2.password)({ validation: { isRequired: true } })
-    },
-    hooks: {
-      afterOperation: ({ operation, item }) => {
-        if (operation === "create") {
-          console.log(
-            `New user created. Name: ${item.name}, Email: ${item.email}`
-          );
-        }
-      }
+      name: (0, import_fields.text)(),
+      email: (0, import_fields.text)({ validation: { isRequired: true }, isIndexed: "unique" }),
+      password: (0, import_fields.password)({ validation: { isRequired: true } })
+      // posts: relationship({ ref: "Post.author", many: true }),
     }
   }),
   Post: (0, import_core.list)({
     access: import_access.allowAll,
     fields: {
-      title: (0, import_fields2.text)({
-        hooks: {
-          afterOperation: ({ operation, item }) => {
-            if (operation === "create") {
-              console.log(`title: ${item.title}`);
-            }
-          }
-        }
-      }),
-      //Customise the Document field
-      avatar: (0, import_fields.image)({
-        storage: "my_local_images",
-        hooks: {
-          beforeOperation: async ({ item, inputData, resolvedData }) => {
-            const sizes = [200, 400, 600];
-            sizes.map(async (size) => {
-              await (0, import_sharp.default)(
-                "public/images/" + resolvedData?.avatar?.id + "." + resolvedData?.avatar?.extension
-              ).resize(size).toFile(
-                `public/images/${size}-${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
-              );
-            });
-          }
-        }
-      }),
-      content: (0, import_fields_document.document)({
-        /* */
-        formatting: true,
-        links: true,
-        dividers: true,
-        layouts: [
-          [1, 1],
-          [1, 1, 1],
-          [2, 1],
-          [1, 2],
-          [1, 2, 1]
-        ]
-        /* */
-      }),
-      publishedAt: (0, import_fields2.timestamp)(),
-      status: (0, import_fields2.select)({
-        options: [
-          { label: "Published", value: "published" },
-          { label: "Draft", value: "draft" }
-        ],
-        defaultValue: "draft",
-        ui: { displayMode: "segmented-control" }
-      }),
-      author: (0, import_fields2.relationship)({
-        ref: "User.posts",
-        ui: {
-          displayMode: "cards",
-          cardFields: ["name", "email"],
-          inlineEdit: { fields: ["name", "email"] },
-          linkToItem: true,
-          inlineCreate: { fields: ["name", "email", "password"] }
-        }
+      title: (0, import_fields.text)(),
+      content: (0, import_fields.text)(),
+      author: (0, import_fields.relationship)({
+        ref: "User"
+        // many: false,
       })
     }
-    // hooks: {
-    //   afterOperation: ({ operation, item }) => {
-    //     if (operation === "create") {
-    //       console.log(
-    //         `New user created. Name: ${item.name}, Email: ${item.email}`
-    //       );
-    //     }
-    //   },
-    // },
   })
 };
 var keystone_default = (0, import_core.config)(

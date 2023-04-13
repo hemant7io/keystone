@@ -19,102 +19,22 @@ const lists = {
   User: list({
     access: allowAll,
     fields: {
-      name: text({ validation: { isRequired: true } }),
+      name: text(),
       email: text({ validation: { isRequired: true }, isIndexed: "unique" }),
-      posts: relationship({ ref: "Post.author", many: true }),
       password: password({ validation: { isRequired: true } }),
-    },
-    hooks: {
-      afterOperation: ({ operation, item }) => {
-        if (operation === "create") {
-          console.log(
-            `New user created. Name: ${item.name}, Email: ${item.email}`
-          );
-        }
-      },
+      // posts: relationship({ ref: "Post.author", many: true }),
     },
   }),
   Post: list({
     access: allowAll,
     fields: {
-      title: text({
-        hooks: {
-          afterOperation: ({ operation, item }) => {
-            if (operation === "create") {
-              console.log(`title: ${item.title}`);
-            }
-          },
-        },
-      }),
-      //Customise the Document field
-      avatar: image({
-        storage: "my_local_images",
-        hooks: {
-          beforeOperation: async ({ item, inputData, resolvedData }) => {
-            const sizes = [200, 400, 600];
-
-            sizes.map(async (size) => {
-              await sharp(
-                "public/images/" +
-                  resolvedData?.avatar?.id +
-                  "." +
-                  resolvedData?.avatar?.extension
-              )
-                .resize(size)
-                .toFile(
-                  `public/images/${size}-${resolvedData?.avatar?.id}.${resolvedData?.avatar?.extension}`
-                );
-              // .toBuffer()
-              // .then((data) => {
-              //   return data;
-              // });
-            });
-          },
-        },
-      }),
-      content: document({
-        /* */
-        formatting: true,
-        links: true,
-        dividers: true,
-        layouts: [
-          [1, 1],
-          [1, 1, 1],
-          [2, 1],
-          [1, 2],
-          [1, 2, 1],
-        ],
-        /* */
-      }),
-      publishedAt: timestamp(),
-      status: select({
-        options: [
-          { label: "Published", value: "published" },
-          { label: "Draft", value: "draft" },
-        ],
-        defaultValue: "draft",
-        ui: { displayMode: "segmented-control" },
-      }),
+      title: text(),
+      content: text(),
       author: relationship({
-        ref: "User.posts",
-        ui: {
-          displayMode: "cards",
-          cardFields: ["name", "email"],
-          inlineEdit: { fields: ["name", "email"] },
-          linkToItem: true,
-          inlineCreate: { fields: ["name", "email", "password"] },
-        },
+        ref: "User",
+        // many: false,
       }),
     },
-    // hooks: {
-    //   afterOperation: ({ operation, item }) => {
-    //     if (operation === "create") {
-    //       console.log(
-    //         `New user created. Name: ${item.name}, Email: ${item.email}`
-    //       );
-    //     }
-    //   },
-    // },
   }),
 };
 

@@ -5,8 +5,6 @@ type User {
   id: ID!
   name: String
   email: String
-  posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
-  postsCount(where: PostWhereInput! = {}): Int
   password: PasswordState
 }
 
@@ -26,7 +24,6 @@ input UserWhereInput {
   id: IDFilter
   name: StringFilter
   email: StringFilter
-  posts: PostManyRelationFilter
 }
 
 input IDFilter {
@@ -74,12 +71,6 @@ input NestedStringFilter {
   not: NestedStringFilter
 }
 
-input PostManyRelationFilter {
-  every: PostWhereInput
-  some: PostWhereInput
-  none: PostWhereInput
-}
-
 input UserOrderByInput {
   id: OrderDirection
   name: OrderDirection
@@ -94,15 +85,7 @@ enum OrderDirection {
 input UserUpdateInput {
   name: String
   email: String
-  posts: PostRelateToManyForUpdateInput
   password: String
-}
-
-input PostRelateToManyForUpdateInput {
-  disconnect: [PostWhereUniqueInput!]
-  set: [PostWhereUniqueInput!]
-  create: [PostCreateInput!]
-  connect: [PostWhereUniqueInput!]
 }
 
 input UserUpdateArgs {
@@ -113,46 +96,15 @@ input UserUpdateArgs {
 input UserCreateInput {
   name: String
   email: String
-  posts: PostRelateToManyForCreateInput
   password: String
-}
-
-input PostRelateToManyForCreateInput {
-  create: [PostCreateInput!]
-  connect: [PostWhereUniqueInput!]
 }
 
 type Post {
   id: ID!
   title: String
-  avatar: ImageFieldOutput
-  content: Post_content_Document
-  publishedAt: DateTime
-  status: String
+  content: String
   author: User
 }
-
-type ImageFieldOutput {
-  id: ID!
-  filesize: Int!
-  width: Int!
-  height: Int!
-  extension: ImageExtension!
-  url: String!
-}
-
-enum ImageExtension {
-  jpg
-  png
-  webp
-  gif
-}
-
-type Post_content_Document {
-  document(hydrateRelationships: Boolean! = false): JSON!
-}
-
-scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
 
 input PostWhereUniqueInput {
   id: ID
@@ -164,73 +116,21 @@ input PostWhereInput {
   NOT: [PostWhereInput!]
   id: IDFilter
   title: StringFilter
-  publishedAt: DateTimeNullableFilter
-  status: StringNullableFilter
+  content: StringFilter
   author: UserWhereInput
-}
-
-input DateTimeNullableFilter {
-  equals: DateTime
-  in: [DateTime!]
-  notIn: [DateTime!]
-  lt: DateTime
-  lte: DateTime
-  gt: DateTime
-  gte: DateTime
-  not: DateTimeNullableFilter
-}
-
-input StringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  mode: QueryMode
-  not: NestedStringNullableFilter
-}
-
-input NestedStringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  not: NestedStringNullableFilter
 }
 
 input PostOrderByInput {
   id: OrderDirection
   title: OrderDirection
-  publishedAt: OrderDirection
-  status: OrderDirection
+  content: OrderDirection
 }
 
 input PostUpdateInput {
   title: String
-  avatar: ImageFieldInput
-  content: JSON
-  publishedAt: DateTime
-  status: String
+  content: String
   author: UserRelateToOneForUpdateInput
 }
-
-input ImageFieldInput {
-  upload: Upload!
-}
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input UserRelateToOneForUpdateInput {
   create: UserCreateInput
@@ -245,10 +145,7 @@ input PostUpdateArgs {
 
 input PostCreateInput {
   title: String
-  avatar: ImageFieldInput
-  content: JSON
-  publishedAt: DateTime
-  status: String
+  content: String
   author: UserRelateToOneForCreateInput
 }
 
